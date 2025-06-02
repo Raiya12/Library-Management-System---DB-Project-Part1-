@@ -79,3 +79,64 @@ CREATE TABLE Review (
     FOREIGN KEY (MemberID) REFERENCES Member(MemberID),
     FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
+
+--------------------------------------------------------Insert real-world data
+
+INSERT INTO Library (Name, Location, ContactNumber, EstablishedYear) VALUES
+('Central City Library', '123 Main St', '555-1234', 1950),
+('Westside Branch', '45 West St', '555-5678', 1985),
+('University Library', '77 College Rd', '555-9876', 2000);
+
+INSERT INTO Member (FullName, Email, PhoneNumber, MembershipStartDate) VALUES
+('Alice Johnson', 'alice.j@example.com', '555-0001', '2023-01-15'),
+('Bob Smith', 'bob.smith@example.com', '555-0002', '2022-11-01'),
+('Clara Reyes', 'clara.reyes@example.com', '555-0003', '2024-03-21'),
+('David Lee', 'david.lee@example.com', '555-0004', '2023-09-08'),
+('Emma Stone', 'emma.stone@example.com', '555-0005', '2024-01-10'),
+('Frank Ng', 'frank.ng@example.com', '555-0006', '2023-07-12');
+
+INSERT INTO Book (ISBN, Title, Genre, Price, ShelfLocation, LibraryID) VALUES
+('978-0451524935', '1984', 'Fiction', 10.99, 'A1', 1),
+('978-0140449136', 'The Odyssey', 'Fiction', 12.50, 'A2', 1),
+('978-0062316097', 'Sapiens', 'Non-fiction', 15.00, 'B1', 2),
+('978-0199535569', 'Pride and Prejudice', 'Fiction', 9.99, 'A3', 1),
+('978-0385472579', 'Zen and the Art of Motorcycle Maintenance', 'Non-fiction', 13.49, 'B2', 2),
+('978-0545010221', 'Harry Potter and the Deathly Hallows', 'Children', 18.00, 'C1', 3),
+('978-0590353427', 'Harry Potter and the Sorcerer''s Stone', 'Children', 16.00, 'C2', 3),
+('978-0131103627', 'The C Programming Language', 'Reference', 45.00, 'D1', 3),
+('978-0201633610', 'Design Patterns', 'Reference', 49.99, 'D2', 3),
+('978-0262033848', 'Introduction to Algorithms', 'Reference', 55.00, 'D3', 3);
+
+INSERT INTO Staff (FullName, Position, ContactNumber, LibraryID) VALUES
+('Grace Kim', 'Librarian', '555-2001', 1),
+('Henry Ford', 'Assistant Librarian', '555-2002', 1),
+('Irene Wells', 'Manager', '555-2003', 2),
+('James Bond', 'Technician', '555-2004', 3);
+
+INSERT INTO Loan (MemberID, BookID, LoanDate, DueDate, ReturnDate, Status) VALUES
+(1, 1, '2024-05-01', '2024-05-15', '2024-05-14', 'Returned'),
+(2, 2, '2024-05-10', '2024-05-24', NULL, 'Issued'),
+(3, 3, '2024-05-11', '2024-05-25', NULL, 'Overdue'),
+(4, 4, '2024-05-09', '2024-05-23', '2024-05-21', 'Returned'),
+(5, 5, '2024-05-08', '2024-05-22', NULL, 'Issued'),
+(6, 6, '2024-05-12', '2024-05-26', NULL, 'Issued'),
+(1, 7, '2024-05-13', '2024-05-27', NULL, 'Issued'),
+(2, 8, '2024-05-14', '2024-05-28', NULL, 'Issued'),
+(3, 9, '2024-05-15', '2024-05-29', NULL, 'Issued'),
+(4, 10, '2024-05-16', '2024-05-30', NULL, 'Issued');
+
+INSERT INTO Payment (PaymentDate, Amount, Method, MemberID, BookID, LoanDate) VALUES
+('2024-05-20', 2.50, 'Cash', 3, 3, '2024-05-11'),
+('2024-05-22', 1.75, 'Card', 4, 4, '2024-05-09'),
+('2024-05-25', 3.00, 'Cash', 1, 1, '2024-05-01'),
+('2024-05-26', 4.00, 'Card', 5, 5, '2024-05-08');
+
+INSERT INTO Review (MemberID, BookID, ReviewDate, Rating, Comments) VALUES
+(1, 1, '2024-05-15', 5, 'Amazing read!'),
+(2, 2, '2024-05-16', 4, 'Classic story.'),
+(3, 3, '2024-05-17', 5, 'Very insightful.'),
+(4, 4, '2024-05-18', 3, 'Not bad.'),
+(5, 5, '2024-05-19', 4, 'Great philosophy.'),
+(6, 6, '2024-05-20', 5, 'Loved every chapter!');
+
+
