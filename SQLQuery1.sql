@@ -140,3 +140,16 @@ INSERT INTO Review (MemberID, BookID, ReviewDate, Rating, Comments) VALUES
 (6, 6, '2024-05-20', 5, 'Loved every chapter!');
 
 
+------------------------------------------------------------------DML to simulate real application behavior
+----Mark books as returned
+UPDATE Loan SET ReturnDate = '2024-05-28', Status = 'Returned'WHERE MemberID = 2 AND BookID = 2 AND LoanDate = '2024-05-10';
+
+----Delete a review
+DELETE FROM Review WHERE MemberID = 5 AND BookID = 5 AND ReviewDate = '2024-05-19';
+
+--Delete a payment
+DELETE FROM Payment WHERE PaymentID = 2;
+
+--Update loan status to overdue
+UPDATE Loan SET Status = 'Overdue' WHERE MemberID = 6 AND BookID = 6 AND LoanDate = '2024-05-12';
+
