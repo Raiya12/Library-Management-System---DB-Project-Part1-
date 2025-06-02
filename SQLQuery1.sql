@@ -328,3 +328,28 @@ FROM Book b
 JOIN Review r ON b.BookID = r.BookID
 GROUP BY b.BookID, b.Title
 HAVING COUNT(r.ReviewDate) > 5 AND AVG(r.Rating) > 4.5;
+
+---------------------------------Simple Views Practice
+--1. ViewAvailableBooks
+CREATE VIEW ViewAvailableBooks AS
+SELECT BookID, Title, Genre, Price, ShelfLocation, LibraryID
+FROM Book
+WHERE AvailabilityStatus = 1;
+
+SELECT * FROM ViewAvailableBooks;
+
+--2. ViewActiveMembers
+CREATE VIEW ViewActiveMembers AS
+SELECT MemberID, FullName, Email, PhoneNumber, MembershipStartDate
+FROM Member
+WHERE MembershipStartDate >= DATEADD(year, -1, GETDATE());
+
+SELECT * FROM ViewActiveMembers;
+
+--3. ViewLibraryContacts
+CREATE VIEW ViewLibraryContacts AS
+SELECT LibraryID, Name, ContactNumber
+FROM Library;
+
+SELECT * FROM ViewLibraryContacts;
+
