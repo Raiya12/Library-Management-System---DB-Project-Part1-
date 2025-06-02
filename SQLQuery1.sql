@@ -353,3 +353,57 @@ FROM Library;
 
 SELECT * FROM ViewLibraryContacts;
 
+-------------------------------------Transactions & Aggregation Functions 
+--Section A: Transactions Simulation 
+BEGIN TRANSACTION;
+
+BEGIN TRY
+    DECLARE @MemberID INT = 1;
+    DECLARE @BookID INT = 2;
+    DECLARE @LoanDate DATE = GETDATE();
+    DECLARE @DueDate DATE = DATEADD(DAY, 14, @LoanDate);
+
+    -- Insert loan
+    INSERT INTO Loan (MemberID, BookID, LoanDate, DueDate, Status)
+    VALUES (@MemberID, @BookID, @LoanDate, @DueDate, 'Issued');
+
+    -- Update book availability
+    UPDATE Book
+    SET AvailabilityStatus = 0
+    WHERE BookID = @BookID;
+
+    COMMIT;
+    PRINT 'Transaction committed successfully.';
+END TRY
+
+BEGIN CATCH
+    ROLLBACK;
+    PRINT 'Transaction failed and was rolled back.';
+    PRINT ERROR_MESSAGE();
+END CATCH;
+
+--Section B: Aggregation Functions Practice:
+
+--1. Count total books in each genre
+SELECT Genre, COUNT(*) AS TotalBooks
+FROM Book
+GROUP BY Genre;
+
+--2. Average rating per book
+SELECT BookID, AVG(Rating) AS AverageRating
+FROM Review
+GROUP BY BookID;
+
+--3. Total fine paid by each member
+SELECT MemberID, SUM(Amount) AS TotalFinesPaid
+FROM Payment
+GROUP BY MemberID;
+
+--4. Highest payment ever made
+SELECT MAX(Amount) AS HighestPayment
+FROM Payment;
+
+--5. Number of loans per member
+SELECT MemberID, COUNT(*) AS LoanCount
+FROM Loan
+GROUP BY MemberID;
