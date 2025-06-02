@@ -275,3 +275,56 @@ FROM Member m
 LEFT JOIN Loan l ON m.MemberID = l.MemberID
 WHERE l.MemberID IS NULL;
 
+--11. Books that were never loaned
+SELECT b.BookID, b.Title
+FROM Book b
+LEFT JOIN Loan l ON b.BookID = l.BookID
+WHERE l.BookID IS NULL;
+
+--12. List all payments with member name and book title
+SELECT p.PaymentID, m.FullName, b.Title, p.PaymentDate, p.Amount, p.Method
+FROM Payment p
+JOIN Member m ON p.MemberID = m.MemberID
+JOIN Book b ON p.BookID = b.BookID
+ORDER BY p.PaymentDate DESC;
+
+--13. List all overdue loans with member and book details
+SELECT l.MemberID, m.FullName, l.BookID, b.Title, l.LoanDate, l.DueDate
+FROM Loan l
+JOIN Member m ON l.MemberID = m.MemberID
+JOIN Book b ON l.BookID = b.BookID
+WHERE l.Status = 'Overdue';
+
+--14. Number of times a book was loaned
+DECLARE @BookID INT = 1;  
+
+SELECT b.BookID, b.Title, COUNT(l.LoanDate) AS LoanCount
+FROM Book b
+LEFT JOIN Loan l ON b.BookID = l.BookID
+WHERE b.BookID = @BookID
+GROUP BY b.BookID, b.Title;
+
+--15. Total fines paid by a member
+DECLARE @MemberID INT = 1;
+
+SELECT m.MemberID, m.FullName, COALESCE(SUM(p.Amount), 0) AS TotalFinesPaid
+FROM Member m
+LEFT JOIN Payment p ON m.MemberID = p.MemberID
+WHERE m.MemberID = @MemberID
+GROUP BY m.MemberID, m.FullName;
+
+--16. Count available and unavailable books in a library
+DECLARE @LibraryID INT = 1;  -- Set desired LibraryID here
+
+SELECT 
+  SUM(CASE WHEN AvailabilityStatus = 1 THEN 1 ELSE 0 END) AS AvailableBooks,
+  SUM(CASE WHEN AvailabilityStatus = 0 THEN 1 ELSE 0 END) AS UnavailableBooks
+FROM Book
+WHERE LibraryID = @LibraryID;
+
+--17. Books with more than 5 reviews and average rating > 4.5
+SELECT b.BookID, b.Title, COUNT(r.ReviewDate) AS ReviewCount, AVG(r.Rating) AS AvgRating
+FROM Book b
+JOIN Review r ON b.BookID = r.BookID
+GROUP BY b.BookID, b.Title
+HAVING COUNT(r.ReviewDate) > 5 AND AVG(r.Rating) > 4.5;
