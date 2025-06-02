@@ -79,6 +79,9 @@ CREATE TABLE Review (
     FOREIGN KEY (MemberID) REFERENCES Member(MemberID),
     FOREIGN KEY (BookID) REFERENCES Book(BookID)
 );
+--=========================================================================================================================================================================
+--------------------------------------------------------------------------DB Project Part 1 ------------------------------------------------------------------------------
+--=========================================================================================================================================================================
 
 --------------------------------------------------------Insert real-world data
 
@@ -198,3 +201,77 @@ VALUES (999, 1, '2024-06-01', 4);
 
 UPDATE Loan SET MemberID = 999 WHERE BookID = 1 AND LoanDate = '2024-05-01';
 --RESOLUTION: Only assign to existing members.
+
+--=========================================================================================================================================================================
+--------------------------------------------------------------------------DB Project Part 2 ------------------------------------------------------------------------------
+--=========================================================================================================================================================================
+
+--1. GET /books/popular — Top 3 books by number of times loaned
+SELECT b.BookID, b.Title, COUNT(l.LoanDate) AS LoanCount
+FROM Book b
+LEFT JOIN Loan l ON b.BookID = l.BookID
+GROUP BY b.BookID, b.Title
+ORDER BY LoanCount DESC
+OFFSET 0 ROWS FETCH NEXT 3 ROWS ONLY;
+
+--2. GET /members/:id/history — Full loan history of a member
+SELECT b.Title, l.LoanDate, l.ReturnDate
+FROM Loan l
+JOIN Book b ON l.BookID = b.BookID
+WHERE l.MemberID = 1  
+ORDER BY l.LoanDate DESC;
+
+--3. GET /books/:id/reviews — All reviews for a book with member name and comments
+SELECT m.FullName, r.Rating, r.Comments, r.ReviewDate
+FROM Review r
+JOIN Member m ON r.MemberID = m.MemberID
+WHERE r.BookID = 1 
+ORDER BY r.ReviewDate DESC;
+
+--4. GET /libraries/:id/staff — List all staff for a librar
+DECLARE @LibraryID INT = 1;  
+SELECT StaffID, FullName, Position, ContactNumber
+FROM Staff
+WHERE LibraryID = @LibraryID;
+
+--5. Show books within a price range
+DECLARE @MinPrice DECIMAL(10,2) = 5.00;
+DECLARE @MaxPrice DECIMAL(10,2) = 15.00;
+
+SELECT BookID, Title, Price
+FROM Book
+WHERE Price BETWEEN @MinPrice AND @MaxPrice;
+
+--6. List all currently active loans (not returned)
+SELECT l.MemberID, m.FullName, l.BookID, b.Title, l.LoanDate, l.DueDate
+FROM Loan l
+JOIN Member m ON l.MemberID = m.MemberID
+JOIN Book b ON l.BookID = b.BookID
+WHERE l.Status = 'Issued';
+
+--7. Members who have paid any fine
+SELECT DISTINCT m.MemberID, m.FullName
+FROM Member m
+JOIN Payment p ON m.MemberID = p.MemberID;
+
+--8. Books never reviewed
+SELECT b.BookID, b.Title
+FROM Book b
+LEFT JOIN Review r ON b.BookID = r.BookID
+WHERE r.BookID IS NULL;
+
+--9. Member’s loan history with book titles and status
+DECLARE @MemberID INT = 1;  -- Set desired MemberID here
+
+SELECT b.Title, l.LoanDate, l.ReturnDate, l.Status
+FROM Loan l
+JOIN Book b ON l.BookID = b.BookID
+WHERE l.MemberID = @MemberID
+ORDER BY l.LoanDate DESC;
+
+--10. Members who have never borrowed any book
+SELECT m.MemberID, m.FullName
+FROM Member m
+LEFT JOIN Loan l ON m.MemberID = l.MemberID
+WHERE l.MemberID IS NULL;
+
