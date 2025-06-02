@@ -153,3 +153,48 @@ DELETE FROM Payment WHERE PaymentID = 2;
 --Update loan status to overdue
 UPDATE Loan SET Status = 'Overdue' WHERE MemberID = 6 AND BookID = 6 AND LoanDate = '2024-05-12';
 
+
+------------------------------------------------------------------Error-Based Learning (Live Testing Phase)
+
+
+DELETE FROM Member WHERE MemberID = 1;
+--Resolve: Delete the loans first or enable ON DELETE CASCADE.
+
+DELETE FROM Member WHERE MemberID = 3;
+--RESOLUTION: Delete reviews first or cascade delete.
+
+DELETE FROM Book WHERE BookID = 6;
+--RESOLUTION: Delete or return the loaned book first.
+
+DELETE FROM Book WHERE BookID = 1;
+--RESOLUTION: Delete reviews before deleting the book.
+
+INSERT INTO Loan (MemberID, BookID, LoanDate, DueDate, Status)
+VALUES (999, 1, '2024-06-01', '2024-06-10', 'Issued');
+--RESOLUTION: Insert only for existing members.
+
+INSERT INTO Loan (MemberID, BookID, LoanDate, DueDate, Status)
+VALUES (1, 999, '2024-06-01', '2024-06-10', 'Issued');
+--RESOLUTION: Use valid BookID from the database.
+
+UPDATE Book SET Genre = 'Sci-Fi' WHERE BookID = 1;
+--RESOLUTION: Allowed values: 'Fiction', 'Non-fiction', 'Reference', 'Children'.
+
+INSERT INTO Payment (PaymentDate, Amount, Method, MemberID, BookID, LoanDate)
+VALUES ('2024-06-01', -5.00, 'Cash', 1, 1, '2024-05-01');
+--RESOLUTION: Ensure payment amounts are positive.
+
+INSERT INTO Payment (PaymentDate, Amount, MemberID, BookID, LoanDate)
+VALUES ('2024-06-01', 2.50, 1, 1, '2024-05-01');
+--RESOLUTION: Supply a valid non-null payment method.
+
+INSERT INTO Review (MemberID, BookID, ReviewDate, Rating)
+VALUES (1, 999, '2024-06-01', 5);
+--RESOLUTION: Book must exist before reviewing.
+
+INSERT INTO Review (MemberID, BookID, ReviewDate, Rating)
+VALUES (999, 1, '2024-06-01', 4);
+--RESOLUTION: Register the member first.
+
+UPDATE Loan SET MemberID = 999 WHERE BookID = 1 AND LoanDate = '2024-05-01';
+--RESOLUTION: Only assign to existing members.
